@@ -1,6 +1,7 @@
 import unittest
 import pyklu
 import numpy
+import scipy.sparse as sparse
 
 class TestPyKLU(unittest.TestCase):
     def test_solve_linear_system(self):
@@ -18,6 +19,8 @@ class TestPyKLU(unittest.TestCase):
                          [0, -1, -3, 2, 0], [0, 0, 1, 0, 0],
                          [0, 4, 2, 0, 1]], dtype=numpy.double)
         b = numpy.array([8, 45, -3, 3, 19], dtype=numpy.double)
+
+        A = sparse.csc_matrix(A)
         pyklu.solve_linear_system(A, b)
         self.assertTrue(isinstance(b, numpy.ndarray))
         self.assertEqual(1, b.ndim)

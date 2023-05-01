@@ -13,11 +13,10 @@ INCLUDE = -I$(LIBPATH)/KLU/Include \
           -I$(LIBPATH)/COLAMD/Include \
           -I$(LIBPATH)/SuiteSparse_config
 
-LIB = $(LIBPATH)/KLU/Lib/libklu.a \
-      $(LIBPATH)/BTF/Lib/libbtf.a \
-	  $(LIBPATH)/AMD/Lib/libamd.a \
-      $(LIBPATH)/COLAMD/Lib/libcolamd.a \
-      $(LIBPATH)/SuiteSparse_config/libsuitesparseconfig.a
+LIB = $(LIBPATH)/KLU/build/libklu.a \
+      $(LIBPATH)/BTF/build/libbtf.a \
+	  $(LIBPATH)/AMD/build/libamd.a \
+      $(LIBPATH)/COLAMD/build/libcolamd.a
 
 temp:
 	mkdir temp
@@ -36,16 +35,9 @@ suite_sparse_build: temp/SuiteSparse-$(SS_VER)
 	make
 
 pyKLU: pyklu.c suite_sparse_build
-	$(CC) -shared pyklu.c $(LIB) $(INCLUDE) -o libpyklu.so
+	$(CC) -shared pyklu.c $(LIB) $(INCLUDE) -o pyklu/libpyklu.so
 
 all: pyKLU
-
-# prelude:
-# 	(cd $(LIBPATH)/KLU/Lib/ && make CC=gcc)
-# 	(cd $(LIBPATH)/AMD/Lib/ && make CC=gcc)
-# 	(cd $(LIBPATH)/BTF/Lib/ && make CC=gcc)
-# 	(cd $(LIBPATH)/COLAMD/Lib/ && make CC=gcc)
-# 	(cd $(LIBPATH)/SuiteSparse_config/ && make CC=gcc)
 
 
 

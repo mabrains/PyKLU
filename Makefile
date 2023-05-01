@@ -16,7 +16,8 @@ INCLUDE = -I$(LIBPATH)/KLU/Include \
 LIB = $(LIBPATH)/KLU/build/libklu.a \
       $(LIBPATH)/BTF/build/libbtf.a \
 	  $(LIBPATH)/AMD/build/libamd.a \
-      $(LIBPATH)/COLAMD/build/libcolamd.a
+      $(LIBPATH)/COLAMD/build/libcolamd.a \
+	  $(LIBPATH)/SuiteSparse_config/build/libsuitesparseconfig.a
 
 temp:
 	mkdir temp
@@ -34,8 +35,12 @@ suite_sparse_build: temp/SuiteSparse-$(SS_VER)
 	cd ./temp/SuiteSparse-$(SS_VER)
 	make
 
-pyKLU: pyklu.c suite_sparse_build
-	$(CC) -shared pyklu.c $(LIB) $(INCLUDE) -o pyklu/libpyklu.so
+#pyKLU: pyklu.c suite_sparse_build
+pyklu.o: pyklu.c
+	$(CC) -Wall -Werror -fpic pyklu.c $(LIB) $(INCLUDE)
+
+pyKLU: pyklu.o
+	$(CC) -shared -o -o pyklu/libpyklu.so pyklu.o
 
 all: pyKLU
 

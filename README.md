@@ -34,6 +34,11 @@ library in root folder of this project.
 
 4. Feel free to enjoy this wrapper.
 
+Note: we need to add the following to the cmake targets in the file `Makefile` inside suitespare pacakge: 
+```
+-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true
+```
+
 ## Usage
 
 In this stage, we just provide a wrapper in local and have not install it

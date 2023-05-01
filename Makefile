@@ -3,8 +3,9 @@
 default: all
 
 CC = gcc
+SS_VER = 7.0.1
 
-LIBPATH = ./temp/SuiteSparse-4.4.4/SuiteSparse
+LIBPATH = ./temp/SuiteSparse-$(SS_VER)/
 
 INCLUDE = -I$(LIBPATH)/KLU/Include \
           -I$(LIBPATH)/AMD/Include \
@@ -18,15 +19,33 @@ LIB = $(LIBPATH)/KLU/Lib/libklu.a \
       $(LIBPATH)/COLAMD/Lib/libcolamd.a \
       $(LIBPATH)/SuiteSparse_config/libsuitesparseconfig.a
 
-all: prelude pyKLU
+temp:
+	mkdir temp
 
-prelude:
-	(cd $(LIBPATH)/KLU/Lib/ && make CC=gcc)
-	(cd $(LIBPATH)/AMD/Lib/ && make CC=gcc)
-	(cd $(LIBPATH)/BTF/Lib/ && make CC=gcc)
-	(cd $(LIBPATH)/COLAMD/Lib/ && make CC=gcc)
-	(cd $(LIBPATH)/SuiteSparse_config/ && make CC=gcc)
+temp/$(SS_VER).tar.gz: temp
+	wget -O ./temp/SuiteSparse.tar.gz https://github.com/DrTimothyAldenDavis/SuiteSparse/archive/refs/tags/v$(SS_VER).tar.gz
 
-pyKLU: pyklu.c $(LIB)
+.ONESHELL:
+temp/SuiteSparse-$(SS_VER): temp/$(SS_VER).tar.gz
+	cd ./temp/
+	tar -zxvf SuiteSparse.tar.gz
+
+.ONESHELL:
+suite_sparse_build: temp/SuiteSparse-$(SS_VER)
+	cd ./temp/SuiteSparse-$(SS_VER)
+	make
+
+pyKLU: pyklu.c suite_sparse_build
 	$(CC) -shared pyklu.c $(LIB) $(INCLUDE) -o libpyklu.so
+
+all: pyKLU
+
+# prelude:
+# 	(cd $(LIBPATH)/KLU/Lib/ && make CC=gcc)
+# 	(cd $(LIBPATH)/AMD/Lib/ && make CC=gcc)
+# 	(cd $(LIBPATH)/BTF/Lib/ && make CC=gcc)
+# 	(cd $(LIBPATH)/COLAMD/Lib/ && make CC=gcc)
+# 	(cd $(LIBPATH)/SuiteSparse_config/ && make CC=gcc)
+
+
 
